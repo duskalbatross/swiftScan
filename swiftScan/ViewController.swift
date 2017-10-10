@@ -63,7 +63,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
     
     //MARK: ----模仿qq扫码界面---------
-    func qqStyle()
+    @objc func qqStyle()
     {
         print("qqStyle")
         
@@ -76,7 +76,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
     
     //MARK: ---模仿支付宝------
-    func ZhiFuBaoStyle()
+    @objc func ZhiFuBaoStyle()
     {
         //设置扫码区域参数
         var style = LBXScanViewStyle()
@@ -128,7 +128,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
     
     //MARK: -------条形码扫码界面 ---------
-    func notSquare()
+    @objc func notSquare()
     {
         //设置扫码区域参数
         //设置扫码区域参数
@@ -161,7 +161,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     
     //MARK: ----无边框，内嵌4个角 -----
-    func InnerStyle()
+    @objc func InnerStyle()
     {
         //设置扫码区域参数
         var style = LBXScanViewStyle()
@@ -185,7 +185,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     
     //MARK: ---无边框，内嵌4个角------
-    func weixinStyle()
+    @objc func weixinStyle()
     {
         //设置扫码区域参数
         var style = LBXScanViewStyle()
@@ -212,7 +212,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     
     //MARK: ----框内区域识别
-    func  recoCropRect()
+    @objc func  recoCropRect()
     {
         //设置扫码区域参数
         var style = LBXScanViewStyle()
@@ -246,7 +246,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     
     //MARK: -----4个角在矩形框线上,网格动画
-    func OnStyle()
+    @objc func OnStyle()
     {
         //设置扫码区域参数
         var style = LBXScanViewStyle()
@@ -272,7 +272,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     
     //MARK: -------自定义4个角及矩形框颜色
-    func changeColor()
+    @objc func changeColor()
     {
         //设置扫码区域参数
         var style = LBXScanViewStyle()
@@ -306,7 +306,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     
     //MARK: ------改变扫码区域位置
-    func changeSize()
+    @objc func changeSize()
     {
         //设置扫码区域参数
         var style = LBXScanViewStyle()
@@ -336,7 +336,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     
     //MARK: -------- 相册
-    func openLocalPhotoAlbum()
+    @objc func openLocalPhotoAlbum()
     {
         let picker = UIImagePickerController()
         
@@ -395,7 +395,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         present(alertController, animated: true, completion: nil)
     }
     
-    func myCode()
+    @objc func myCode()
     {
         let vc = MyCodeViewController()
         self.navigationController?.pushViewController(vc, animated: true)

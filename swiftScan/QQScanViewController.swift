@@ -123,7 +123,7 @@ class QQScanViewController: LBXScanViewController {
     }
     
     //开关闪光灯
-    func openOrCloseFlash()
+    @objc func openOrCloseFlash()
     {
         scanObj?.changeTorch();
         
@@ -139,7 +139,7 @@ class QQScanViewController: LBXScanViewController {
         }
     }
     
-    func myCode()
+    @objc func myCode()
     {
         let vc = MyCodeViewController()
         self.navigationController?.pushViewController(vc, animated: true)
