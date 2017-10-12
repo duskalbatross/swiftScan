@@ -123,7 +123,7 @@ open class LBXScanViewController: UIViewController, UIImagePickerControllerDeleg
             qRScanView = LBXScanView(frame: self.view.frame,vstyle:scanStyle! )
             self.view.addSubview(qRScanView!)
         }
-        qRScanView?.deviceStartReadying(readyStr: NSLocalizedString("Loading...", comment: "Loading..."))
+        qRScanView?.deviceStartReadying(readyStr: NSLocalizedString("加载中...", comment: "加载中..."))
         
     }
    

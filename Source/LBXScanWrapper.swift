@@ -30,9 +30,7 @@ public struct  LBXScanResult {
     }
 }
 
-
-
-open class LBXScanWrapper: NSObject,AVCaptureMetadataOutputObjectsDelegate {
+open class LBXScanWrapper: NSObject,AVCaptureMetadataOutputObjectsDelegate, AVCapturePhotoCaptureDelegate {
     
     let device:AVCaptureDevice? = AVCaptureDevice.default(for: AVMediaType.video);
     
@@ -41,7 +39,8 @@ open class LBXScanWrapper: NSObject,AVCaptureMetadataOutputObjectsDelegate {
     
     let session = AVCaptureSession()
     var previewLayer:AVCaptureVideoPreviewLayer?
-    var stillImageOutput:AVCaptureStillImageOutput?
+//    var stillImageOutput:AVCaptureStillImageOutput?
+    var stillImageOutput:AVCapturePhotoOutput?
     
     //存储返回结果
     var arrayResult:[LBXScanResult] = [];
@@ -80,7 +79,7 @@ open class LBXScanWrapper: NSObject,AVCaptureMetadataOutputObjectsDelegate {
         
         isNeedCaptureImage = isCaptureImg
         
-        stillImageOutput = AVCaptureStillImageOutput();
+        stillImageOutput = AVCapturePhotoOutput();
         
         super.init()
         
@@ -102,9 +101,9 @@ open class LBXScanWrapper: NSObject,AVCaptureMetadataOutputObjectsDelegate {
             session.addOutput(stillImageOutput!)
         }
         
-        let outputSettings:Dictionary = [AVVideoCodecJPEG:AVVideoCodecKey]
-        stillImageOutput?.outputSettings = outputSettings
-    
+//        let outputSettings:Dictionary = [AVVideoCodecJPEG:AVVideoCodecKey]
+//        stillImageOutput?.outputSettings = outputSettings
+        
         session.sessionPreset = AVCaptureSession.Preset.high
         
         //参数设置
@@ -221,28 +220,75 @@ open class LBXScanWrapper: NSObject,AVCaptureMetadataOutputObjectsDelegate {
     //MARK: ----拍照
     open func captureImage()
     {
-        let stillImageConnection:AVCaptureConnection? = connectionWithMediaType(mediaType: AVMediaType.video.rawValue, connections: (stillImageOutput?.connections)! as [AnyObject])
+//        let stillImageConnection:AVCaptureConnection? = connectionWithMediaType(mediaType: AVMediaType.video.rawValue, connections: (stillImageOutput?.connections)! as [AnyObject])
         
         
-        stillImageOutput?.captureStillImageAsynchronously(from: stillImageConnection!, completionHandler: { (imageDataSampleBuffer, error) -> Void in
+//        stillImageOutput?.captureStillImageAsynchronously(from: stillImageConnection!, completionHandler: { (imageDataSampleBuffer, error) -> Void in
+//
+//            self.stop()
+//            if imageDataSampleBuffer != nil
+//            {
+////                let imageData: Data = AVCaptureStillImageOutput.jpegStillImageNSDataRepresentation(imageDataSampleBuffer!) as! Data
+//                 let imageData: Data = AVCaptureStillImageOutput.jpegStillImageNSDataRepresentation(imageDataSampleBuffer!)!
+//                let scanImg:UIImage? = UIImage(data: imageData)
+//
+//
+//                for idx in 0...self.arrayResult.count-1
+//                {
+//                    self.arrayResult[idx].imgScanned = scanImg
+//                }
+//            }
+//
+//            self.successBlock(self.arrayResult)
+//
+//        })
+        
+        // 使用AVCapturePhotoOutput，ios10以上
+        let settingsForMonitoring = AVCapturePhotoSettings()
+//        settingsForMonitoring.flashMode = .auto
+        settingsForMonitoring.isAutoStillImageStabilizationEnabled = true
+        settingsForMonitoring.isHighResolutionPhotoEnabled = false
+        stillImageOutput?.capturePhoto(with: settingsForMonitoring, delegate: self)
+    }
+    
+    /// iOS 11.0 以下版本使用该方法
+    public func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photoSampleBuffer: CMSampleBuffer?, previewPhoto previewPhotoSampleBuffer: CMSampleBuffer?, resolvedSettings: AVCaptureResolvedPhotoSettings, bracketSettings: AVCaptureBracketedStillImageSettings?, error: Error?) {
+        
+        self.stop()
+        
+        if let photoSampleBuffer = photoSampleBuffer {
+            let photoData = AVCapturePhotoOutput.jpegPhotoDataRepresentation(forJPEGSampleBuffer: photoSampleBuffer, previewPhotoSampleBuffer: previewPhotoSampleBuffer)
             
-            self.stop()
-            if imageDataSampleBuffer != nil
+            let image = UIImage(data: photoData!)
+//            UIImageWriteToSavedPhotosAlbum(image!, nil, nil, nil)
+            for idx in 0...self.arrayResult.count-1
             {
-//                let imageData: Data = AVCaptureStillImageOutput.jpegStillImageNSDataRepresentation(imageDataSampleBuffer!) as! Data
-                 let imageData: Data = AVCaptureStillImageOutput.jpegStillImageNSDataRepresentation(imageDataSampleBuffer!)!
-                let scanImg:UIImage? = UIImage(data: imageData)
-                
-                
-                for idx in 0...self.arrayResult.count-1
-                {
-                    self.arrayResult[idx].imgScanned = scanImg
-                }
+                self.arrayResult[idx].imgScanned = image
             }
             
-            self.successBlock(self.arrayResult)
+        }
+        
+        self.successBlock(self.arrayResult)
+    }
+    
+    /// iOS 11.0 以上版本使用该方法
+    @available(iOS 11.0, *)
+    public func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
+        
+        self.stop()
+        
+        if let imageData = photo.fileDataRepresentation() {
             
-        })
+            let image = UIImage(data: imageData)
+            //        UIImageWriteToSavedPhotosAlbum(image!, nil, nil, nil)
+            
+            for idx in 0...self.arrayResult.count-1
+            {
+                self.arrayResult[idx].imgScanned = image
+            }
+        }
+        
+        self.successBlock(self.arrayResult)
     }
     
     open func connectionWithMediaType(mediaType:String,connections:[AnyObject]) -> AVCaptureConnection?
